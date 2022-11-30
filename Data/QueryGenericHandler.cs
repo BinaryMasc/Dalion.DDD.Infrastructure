@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Dalion.DDD.Infrastructure.Data
 {
-    public class QueryGenericHandler<T> where T : new()
+    public class QueryGenericHandler<T> where T : class, new()
     {
 
         string _tableName;
