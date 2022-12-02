@@ -22,6 +22,7 @@ namespace Dalion.DDD.Infrastructure.Data
             if (_connection == null || _connection.State != ConnectionState.Open)
             {
                 _connection = new SqlConnection(_connectionString);
+                _connection.Open();
             }
 
             return _connection;

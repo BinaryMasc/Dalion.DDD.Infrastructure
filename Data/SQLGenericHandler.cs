@@ -8,53 +8,25 @@ using System.Reflection;
 
 namespace Dalion.DDD.Infrastructure.Data
 {
-    public class SQLGenericHandler : IDatabaseGenericHandler
+    public class SQLGenericHandler
     {
 
         public SQLGenericHandler() { }
 
 
+        public async Task<int> ExecuteSqlCommand(string command)
+        {
+            SqlCommand sqlCommand = new SqlCommand(command, SQLConnection.GetOpenConnection());
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <typeparam name="T">Type of model that coincide with TableName</typeparam>
-        ///// <param name="modelT">For nothing</param>
-        ///// <param name="pFilter">filters applied to query. Ex: id=1</param>
-        ///// <returns>The mapped object</returns>
-        ///// <exception cref="ArgumentNullException">modelT can't be null</exception>y
-        //public async Task<T> GetObjectAsync<T>(T modelT, string pFilter = "")
-        //{
-        //    if (modelT == null) throw new ArgumentNullException("modelT");
+            int rowsAffected = 0;
 
+            await Task.Run(() =>
+            {
+                rowsAffected = sqlCommand.ExecuteNonQuery();
+            });
 
-
-        //    var type = modelT.GetType();
-        //    var tableName = type.Name;
-        //    var properties = type.GetProperties();
-
-
-        //    var fields = "";
-
-        //    for (int i = 0; i < properties.Length; i++)
-        //    {
-        //        fields += (i > 0 ? ",\n" : "") + $"[{properties[i].Name}]";
-        //    }
-
-
-        //    var query =
-        //        $"SELECT {fields} \n" +
-        //        $"FROM [{tableName}]\n" +
-        //        $"{(string.IsNullOrEmpty(pFilter) ? "" : $"WHERE {pFilter} ")}";
-
-        //    using (var adapter = await GetDataFromSqlQuery(query))
-        //    {
-        //        GenericMapper mapper = new();
-        //        await mapper.MapObjectFromQueryAsync(modelT, adapter, tableName, properties);
-        //    }
-
-        //    return modelT;
-        //}
+            return rowsAffected;
+        }
 
 
 

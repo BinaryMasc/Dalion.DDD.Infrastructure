@@ -8,10 +8,17 @@
     {
         string _referencedTable;
         string _fieldPrimaryKey;
-        public ForeignKeyAttribute(string referencedTable, string fieldPrimaryKey)
+        Type? _referencedtblType;
+        public ForeignKeyAttribute(string referencedTable, string fieldPrimaryKey, Type? referencedtblType = null)
         {
             _fieldPrimaryKey = fieldPrimaryKey;
             _referencedTable = referencedTable;
+            _referencedtblType = referencedtblType;
         }
+    }
+
+    public class SqlIgnoreAttribute : Attribute
+    {
+
     }
 }
