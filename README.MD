@@ -20,8 +20,27 @@ var result = await query.RunQuery()?[0];    //  Get the first result
 ```
 The QueryGenericHandler<T> object build a query use the name of the class and its fields to build a query, assuming a table or view exists that matches the class and its fields and will automatically be mapped at runtime.
 
+## Command Insert
+```cs
+//  User model example
+User usr = new User
+{
+    Username = "UserFromApi",
+    Email = "userfromApi@yahoo.cool",
+    Name = "Big",
+    LastName = "Mom",
+    Profession = "dev",
+    IsActive = true,
+    IsBlocked = false,
+};
+var cmd = new CommandGenericHandler<User>(usr);
+//  Insert to the User table
+await cmd.RunInsert(usr);
+```
+
 ## Configure ConnectionString
 ```cs
+//	On startup.cs
 SQLConnection.SetConnectionString("Server=localhost;Database=DalionDev;Integrated Security=SSPI");
 ```
 

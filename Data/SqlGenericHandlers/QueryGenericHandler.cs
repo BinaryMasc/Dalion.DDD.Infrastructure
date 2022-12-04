@@ -32,7 +32,7 @@ namespace Dalion.DDD.Infrastructure.Data
 
 
 
-            using (var adapter = await new SQLGenericHandler().GetDataFromSqlQuery(query))
+            using (var adapter = await new SQLGenericHandler().GetDataFromSqlQueryAsync(query))
             {
                 GenericMapper mapper = new();
                 modelList = await mapper.MapObjectsFromQueryAsync<T>(modelList, adapter, _tableName, _type.GetProperties());

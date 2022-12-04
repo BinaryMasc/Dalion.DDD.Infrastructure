@@ -1,4 +1,5 @@
 ﻿using Dalion.DDD.Infrastructure.Data.Attributes;
+using Dalion.DDD.Infrastructure.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,19 @@ namespace Dalion.DDD.Infrastructure.Data
             base.Initialize(model);
         }
 
-        public static int RunInsertSync(T model)
+        public static int RunInsertSync<R>(R model) where R : notnull
         {
-            throw new NotImplementedException();
+            ReflectionUtils.GetNamesAndValuesFromObject<R>(model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues);
+
+            var query =
+                $"INSERT INTO [{model.GetType().Name}](\n" +
+                $"{string.Join(",\n", fieldNames.Select(f => $"[{f}]"))})\n\n" +
+                $"VALUES ({string.Join(",\n", fieldValues)})\n" +
+                $"{""};";
+
+            var sql = new SQLGenericHandler();
+
+            return sql.ExecuteSqlCommand(query);
         }
 
         /// <summary>
@@ -28,7 +39,7 @@ namespace Dalion.DDD.Infrastructure.Data
         public async Task<int> RunInsert(T model)
         {
 
-            GetNamesAndValuesFromObject(model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues);
+            ReflectionUtils.GetNamesAndValuesFromObject<T>(model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues);
 
             var query =
                 $"INSERT INTO [{_tableName}](\n" +
@@ -38,20 +49,10 @@ namespace Dalion.DDD.Infrastructure.Data
 
             var sql = new SQLGenericHandler();
 
-            return await sql.ExecuteSqlCommand(query);
+            return await sql.ExecuteSqlCommandAsync(query);
 
         }
 
-        private void GetNamesAndValuesFromObject(T model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues)
-        {
-            var modelReflection = model.GetType();
-            var properties = modelReflection.GetProperties().Where(p => !p.CustomAttributes.Where(a => a.AttributeType == typeof(SqlIgnoreAttribute)).Any());
-
-            fieldNames = properties.Select(p => p.Name);
-            fieldValues = properties
-                .Select(p => p.GetValue(model))
-                .Select(v => v.GetType() == typeof(string) ? $"'{v}'" : (v.GetType() == typeof(bool) ? ((bool)v == true ? "1" : "0") : v.ToString()));
-
-        }
+        
     }
 }

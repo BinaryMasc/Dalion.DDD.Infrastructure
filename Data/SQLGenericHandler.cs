@@ -14,7 +14,7 @@ namespace Dalion.DDD.Infrastructure.Data
         public SQLGenericHandler() { }
 
 
-        public async Task<int> ExecuteSqlCommand(string command)
+        public async Task<int> ExecuteSqlCommandAsync(string command)
         {
             SqlCommand sqlCommand = new SqlCommand(command, SQLConnection.GetOpenConnection());
 
@@ -28,10 +28,21 @@ namespace Dalion.DDD.Infrastructure.Data
             return rowsAffected;
         }
 
+        public int ExecuteSqlCommand(string command)
+        {
+            SqlCommand sqlCommand = new SqlCommand(command, SQLConnection.GetOpenConnection());
+
+            int rowsAffected = 0;
+
+            rowsAffected = sqlCommand.ExecuteNonQuery();
+
+            return rowsAffected;
+        }
 
 
 
-        public async Task<SqlDataAdapter> GetDataFromSqlQuery(string query)
+
+        public async Task<SqlDataAdapter> GetDataFromSqlQueryAsync(string query)
         {
             SqlCommand sqlCommand = new SqlCommand(query, SQLConnection.GetOpenConnection());
 
@@ -41,6 +52,15 @@ namespace Dalion.DDD.Infrastructure.Data
                 adapter = new SqlDataAdapter(sqlCommand);
             });
 
+            return adapter;
+        }
+
+        public SqlDataAdapter GetDataFromSqlQuery(string query)
+        {
+            SqlCommand sqlCommand = new SqlCommand(query, SQLConnection.GetOpenConnection());
+
+            SqlDataAdapter adapter = new();
+            adapter = new SqlDataAdapter(sqlCommand);
             return adapter;
         }
 

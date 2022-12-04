@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Dalion.DDD.Infrastructure.Data.Attributes;
+using System.Linq.Expressions;
 
 namespace Dalion.DDD.Infrastructure.Utils
 {
@@ -58,7 +59,7 @@ namespace Dalion.DDD.Infrastructure.Utils
             };
         }
 
-        public static void ExpressionToString(BinaryExpression expression, ref string strExpression)
+        private static void ExpressionToString(BinaryExpression expression, ref string strExpression)
         {
             dynamic body = expression;
             strExpression += "(" + body.Left.Member.Name + " ";
@@ -90,7 +91,7 @@ namespace Dalion.DDD.Infrastructure.Utils
             else ExpressionToString(body.Right, ref strExpression);
         }
 
-        public static void ExpressionToString(dynamic expression, ref string strExpression)
+        private static void ExpressionToString(dynamic expression, ref string strExpression)
         {
 
 
@@ -133,6 +134,17 @@ namespace Dalion.DDD.Infrastructure.Utils
             else return member.Value;
         }
 
+        public static void GetNamesAndValuesFromObject<T>(T model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues)
+        {
+            var modelReflection = model.GetType();
+            var properties = modelReflection.GetProperties().Where(p => !p.CustomAttributes.Where(a => a.AttributeType == typeof(SqlIgnoreAttribute)).Any());
+
+            fieldNames = properties.Select(p => p.Name);
+            fieldValues = properties
+                .Select(p => p.GetValue(model))
+                .Select(v => v.GetType() == typeof(string) ? $"'{v}'" : (v.GetType() == typeof(bool) ? ((bool)v == true ? "1" : "0") : v.ToString()));
+
+        }
 
         public static ExpressionData DEPRECATEDGetDiscomposedExpression<T>(Expression < Func<T, bool> > expression)
         {
