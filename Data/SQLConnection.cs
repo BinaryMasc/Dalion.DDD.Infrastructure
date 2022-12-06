@@ -27,5 +27,14 @@ namespace Dalion.DDD.Infrastructure.Data
 
             return _connection;
         }
+
+        public static SqlConnection GetNewOpenConnection()
+        {
+            var con = new SqlConnection(_connectionString);
+            con.Open();
+            
+
+            return _connection;
+        }
     }
 }

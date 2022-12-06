@@ -1,4 +1,5 @@
-﻿using Dalion.DDD.Infrastructure.Utils;
+﻿using Dalion.DDD.Infrastructure.Data.Attributes;
+using Dalion.DDD.Infrastructure.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
@@ -35,7 +36,7 @@ namespace Dalion.DDD.Infrastructure.Data
             using (var adapter = await new SQLGenericHandler().GetDataFromSqlQueryAsync(query))
             {
                 GenericMapper mapper = new();
-                modelList = await mapper.MapObjectsFromQueryAsync<T>(modelList, adapter, _tableName, _type.GetProperties());
+                modelList = await mapper.MapObjectsFromQueryAsync<T>(modelList, adapter, _tableName, _type.GetProperties().Where(p => !p.CustomAttributes.Where(a => a.AttributeType == typeof(SqlIgnoreAttribute)).Any()).ToArray());
             }
 
             return modelList;

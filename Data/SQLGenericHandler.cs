@@ -44,7 +44,7 @@ namespace Dalion.DDD.Infrastructure.Data
 
         public async Task<SqlDataAdapter> GetDataFromSqlQueryAsync(string query)
         {
-            SqlCommand sqlCommand = new SqlCommand(query, SQLConnection.GetOpenConnection());
+            SqlCommand sqlCommand = new SqlCommand(query, SQLConnection.GetNewOpenConnection());
 
             SqlDataAdapter adapter = new();
             await Task.Run(() =>
