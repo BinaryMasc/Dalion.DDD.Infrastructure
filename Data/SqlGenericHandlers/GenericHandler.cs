@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace Dalion.DDD.Infrastructure.Data
 {
+
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
     /// <summary>
     /// Generic abstract class that provide wheres methods for manage sql commands and querys
     /// </summary>
@@ -233,4 +235,6 @@ namespace Dalion.DDD.Infrastructure.Data
         }
 
     }
+
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
 }

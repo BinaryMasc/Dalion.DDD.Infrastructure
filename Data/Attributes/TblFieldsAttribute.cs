@@ -17,6 +17,15 @@
         }
     }
 
+    public class TableNameAttribute : Attribute
+    {
+        string tableName;
+        public TableNameAttribute(string tableName)
+        {
+            this.tableName = tableName;
+        }
+    }
+
     public class SqlIgnoreAttribute : Attribute
     {
 

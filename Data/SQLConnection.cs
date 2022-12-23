@@ -34,7 +34,7 @@ namespace Dalion.DDD.Infrastructure.Data
             con.Open();
             
 
-            return _connection;
+            return con;
         }
     }
 }

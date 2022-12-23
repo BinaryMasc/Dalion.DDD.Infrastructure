@@ -116,7 +116,7 @@ namespace Dalion.DDD.Infrastructure.Utils
 #pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
             ConstantExpression din3 = (ConstantExpression)member.Expression;
 #pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
-            var members = din3.Value?.GetType().GetFields() ?? throw new NullReferenceException("The expression has no fields.");
+            var members = din3?.Value?.GetType().GetFields() ?? throw new NullReferenceException("The expression has no fields.");
             var dictionary = members.ToDictionary(property => property.Name, property => property.GetValue(din3.Value));
 
 
@@ -128,24 +128,24 @@ namespace Dalion.DDD.Infrastructure.Utils
 
         private static object GetRightOperandingExpression(ConstantExpression member)
         {
-            if (member.Value.GetType() == typeof(string))
+            if (member?.Value?.GetType() == typeof(string))
                 return "'" + member.Value + "'";
 
-            else return member.Value;
+            else return member?.Value;
         }
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
         public static void GetNamesAndValuesFromObject<T>(T model, out IEnumerable<string> fieldNames, out IEnumerable<string?> fieldValues)
         {
-            var modelReflection = model.GetType();
-            var properties = modelReflection.GetProperties().Where(p => !p.CustomAttributes.Where(a => a.AttributeType == typeof(SqlIgnoreAttribute)).Any());
+            var modelReflection = model?.GetType();
+            var properties = modelReflection?.GetProperties().Where(p => !p.CustomAttributes.Where(a => a.AttributeType == typeof(SqlIgnoreAttribute)).Any()) ?? throw new NullReferenceException("Null reference in model used for reflection.");
 
             fieldNames = properties.Select(p => p.Name);
             fieldValues = properties
                 .Select(p => p.GetValue(model))
                 .Select(v => v.GetType() == typeof(string) ? $"'{v}'" : (v.GetType() == typeof(bool) ? ((bool)v == true ? "1" : "0") : v.ToString()));
-
         }
-
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         public static ExpressionData DEPRECATEDGetDiscomposedExpression<T>(Expression < Func<T, bool> > expression)
         {
             object? rightValue = new();
